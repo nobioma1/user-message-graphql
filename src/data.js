@@ -17,10 +17,17 @@ module.exports = {
     {
       id: '1',
       text: 'Alo, How are you?',
+      userId: '1',
     },
     {
       id: '2',
       text: "Hi, I'm learning GraphQL",
+      userId: '2',
+    },
+    {
+      id: '3',
+      text: "Hi, I'm another message by user id 1",
+      userId: '1',
     },
   ],
 };
