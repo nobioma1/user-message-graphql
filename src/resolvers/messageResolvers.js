@@ -32,6 +32,15 @@ module.exports = {
       messagesData.push(message);
       return message;
     },
+    updateMessage: (parent, args, { models }) => {
+      const { messagesData } = models;
+      const { id, text } = args;
+      const pos = messagesData.findIndex(message => message.id === id);
+      if (pos >= 0) {
+        messagesData[pos] = { ...messagesData[pos], text };
+        return messagesData[pos];
+      }
+    },
     deleteMessage: (parent, args, { models }) => {
       const { messagesData } = models;
       const pos = messagesData.findIndex(message => message.id === args.id);
