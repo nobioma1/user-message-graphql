@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  Message.associate = ({ User }) => {
+  Message.associate = ({ user }) => {
     // associations can be defined here
-    Message.belongsTo(User, {
+    Message.belongsTo(user, {
       foreignKey: 'userId',
     });
   };
-  return message;
+  return Message;
 };

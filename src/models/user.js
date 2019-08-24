@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  User.associate = ({ Message }) => {
+  User.associate = ({ message }) => {
     // associations can be defined here
-    User.hasMany(Message, { onDelete: 'CASCADE' });
+    User.hasMany(message, { onDelete: 'CASCADE' });
   };
-  return user;
+  return User;
 };
