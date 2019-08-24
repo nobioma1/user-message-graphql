@@ -31,6 +31,7 @@ const schema = gql`
 
   type Mutation {
     createMessage(text: String!): Message!
+    deleteMessage(id: ID!): Message
   }
 `;
 
@@ -67,6 +68,13 @@ const resolvers = {
       };
       messagesData.push(message);
       return message;
+    },
+    deleteMessage: (parent, args) => {
+      const pos = messagesData.findIndex(message => message.id === args.id);
+      if (pos >= 0) {
+        const [message] = messagesData.splice(pos, 1);
+        return message;
+      }
     },
   },
 };
