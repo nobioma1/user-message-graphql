@@ -59,6 +59,9 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
+  context: {
+    authUser: usersData[1],
+  },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
