@@ -5,7 +5,11 @@
   "license": "MIT",
   "scripts": {
     "start": "node ./src/index.js",
-    "dev:server": "nodemon ./src/index.js"
+    "dev:server": "nodemon ./src/index.js",
+    "db:undo": "npx sequelize-cli db:migrate:undo:all",
+    "db:migrate": "npx sequelize-cli db:migrate",
+    "db:seed": "npx sequelize-cli db:seed:all",
+    "db:reset": "yarn db:undo && yarn db:migrate && yarn db:seed"
   },
   "dependencies": {
     "apollo-server": "^2.9.0",
