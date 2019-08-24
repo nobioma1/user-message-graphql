@@ -14,17 +14,19 @@ const schema = gql`
     users: [User!]
     user(id: ID!): User
     messages: [Message!]!
-    message(id: ID!): Message!
+    message(id: ID!): Message
   }
 
   type User {
     id: ID!
     username: String!
+    messages: [Message!]
   }
 
   type Message {
     id: ID!
     text: String!
+    user: User!
   }
 `;
 
@@ -33,13 +35,23 @@ const resolvers = {
     info: () => 'Welcome to Learn-GraphQL',
     users: () => usersData,
     messages: () => messagesData,
-    user: (root, args) => {
+    user: (parent, args) => {
       const { id } = args;
-      return usersData.find(user => user.id === id);
+      return usersData.find(user => user.id === args.id);
     },
-    message: (root, args) => {
+    message: (parent, args) => {
       const { id } = args;
       return messagesData.find(message => message.id === id);
+    },
+  },
+  Message: {
+    user: parent => {
+      return usersData.find(user => user.id === parent.userId);
+    },
+  },
+  User: {
+    messages: parent => {
+      return messagesData.filter(message => message.userId === parent.id);
     },
   },
 };
