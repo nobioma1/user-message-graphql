@@ -28,6 +28,10 @@ const schema = gql`
     text: String!
     user: User!
   }
+
+  type Mutation {
+    createMessage(text: String!): Message!
+  }
 `;
 
 const resolvers = {
@@ -52,6 +56,17 @@ const resolvers = {
   User: {
     messages: parent => {
       return messagesData.filter(message => message.userId === parent.id);
+    },
+  },
+  Mutation: {
+    createMessage: (parent, args, context) => {
+      const message = {
+        id: usersData.length + 1,
+        text: args.text,
+        userId: context.authUser.id,
+      };
+      messagesData.push(message);
+      return message;
     },
   },
 };
