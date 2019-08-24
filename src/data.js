@@ -13,4 +13,14 @@ module.exports = {
       username: 'fred',
     },
   ],
+  messagesData: [
+    {
+      id: '1',
+      text: 'Alo, How are you?',
+    },
+    {
+      id: '2',
+      text: "Hi, I'm learning GraphQL",
+    },
+  ],
 };
