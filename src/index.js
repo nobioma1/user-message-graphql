@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { ApolloServer, gql } = require('apollo-server-express');
 
-const { usersData, messagesData } = require('./data');
+const models = require('./data');
 
 const app = express();
 
@@ -38,38 +38,48 @@ const schema = gql`
 const resolvers = {
   Query: {
     info: () => 'Welcome to Learn-GraphQL',
-    users: () => usersData,
-    messages: () => messagesData,
-    user: (parent, args) => {
-      const { id } = args;
+    users: (parent, args, { models }) => {
+      const { usersData } = models;
+      return usersData;
+    },
+    messages: (parent, args, { models }) => {
+      const { messagesData } = models;
+      return messagesData;
+    },
+    user: (parent, args, { models }) => {
+      const { usersData } = models;
       return usersData.find(user => user.id === args.id);
     },
-    message: (parent, args) => {
-      const { id } = args;
-      return messagesData.find(message => message.id === id);
+    message: (parent, args, { models }) => {
+      const { messagesData } = models;
+      return messagesData.find(message => message.id === args.id);
     },
   },
   Message: {
-    user: parent => {
+    user: (parent, args, { models }) => {
+      const { usersData } = models;
       return usersData.find(user => user.id === parent.userId);
     },
   },
   User: {
-    messages: parent => {
+    messages: (parent, args, { models }) => {
+      const { messagesData } = models;
       return messagesData.filter(message => message.userId === parent.id);
     },
   },
   Mutation: {
-    createMessage: (parent, args, context) => {
+    createMessage: (parent, args, { models, authUser }) => {
+      const { messagesData, usersData } = models;
       const message = {
         id: usersData.length + 1,
         text: args.text,
-        userId: context.authUser.id,
+        userId: authUser.id,
       };
       messagesData.push(message);
       return message;
     },
-    deleteMessage: (parent, args) => {
+    deleteMessage: (parent, args, { models }) => {
+      const { messagesData } = models;
       const pos = messagesData.findIndex(message => message.id === args.id);
       if (pos >= 0) {
         const [message] = messagesData.splice(pos, 1);
@@ -83,7 +93,8 @@ const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   context: {
-    authUser: usersData[1],
+    models,
+    authUser: models.usersData[1],
   },
 });
 
