@@ -1,53 +1,50 @@
 module.exports = {
   Query: {
-    messages: (parent, args, { models }) => {
-      const { messagesData } = models;
-      return messagesData;
+    messages: async (parent, args, { models }) => {
+      const { Message } = models;
+      return await Message.findAll();
     },
-    message: (parent, args, { models }) => {
-      const { messagesData } = models;
-      return messagesData.find(message => message.id === args.id);
+    message: async (parent, args, { models }) => {
+      const { Message } = models;
+      return await Message.findByPk(args.id);
     },
   },
   Message: {
-    user: (parent, args, { models }) => {
-      const { usersData } = models;
-      return usersData.find(user => user.id === parent.userId);
+    user: async (parent, args, { models }) => {
+      const { User } = models;
+      return await User.findByPk(parent.userId);
     },
   },
   User: {
-    messages: (parent, args, { models }) => {
-      const { messagesData } = models;
-      return messagesData.filter(message => message.userId === parent.id);
+    messages: async (parent, args, { models }) => {
+      const { Message } = models;
+      console.log(parent.id);
+
+      return await Message.findAll({
+        where: {
+          userId: parent.id,
+        },
+      });
     },
   },
   Mutation: {
-    createMessage: (parent, args, { models, authUser }) => {
-      const { messagesData, usersData } = models;
+    createMessage: async (parent, args, { models, authUser }) => {
+      const { Message } = models;
       const message = {
-        id: usersData.length + 1,
         text: args.text,
         userId: authUser.id,
       };
-      messagesData.push(message);
-      return message;
+      return await Message.create(message);
     },
-    updateMessage: (parent, args, { models }) => {
-      const { messagesData } = models;
+    updateMessage: async (parent, args, { models }) => {
+      const { Message } = models;
       const { id, text } = args;
-      const pos = messagesData.findIndex(message => message.id === id);
-      if (pos >= 0) {
-        messagesData[pos] = { ...messagesData[pos], text };
-        return messagesData[pos];
-      }
+      return await Message.update({ text }, { where: { id } });
     },
-    deleteMessage: (parent, args, { models }) => {
-      const { messagesData } = models;
-      const pos = messagesData.findIndex(message => message.id === args.id);
-      if (pos >= 0) {
-        const [message] = messagesData.splice(pos, 1);
-        return message;
-      }
+    deleteMessage: async (parent, args, { models }) => {
+      const { Message } = models;
+      const { id } = args;
+      return await Message.destroy({ where: { id }, returning: true });
     },
   },
 };

@@ -1,12 +1,12 @@
 module.exports = {
   Query: {
-    users: (parent, args, { models }) => {
-      const { usersData } = models;
-      return usersData;
+    users: async (parent, args, { models }) => {
+      const { User } = models;
+      return await User.findAll();
     },
-    user: (parent, args, { models }) => {
-      const { usersData } = models;
-      return usersData.find(user => user.id === args.id);
+    user: async (parent, args, { models }) => {
+      const { User } = models;
+      return await User.findByPk(args.id);
     },
   },
 };
