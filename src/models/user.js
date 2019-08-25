@@ -1,4 +1,6 @@
 'use strict';
+const { hashPassword, compareHashPassword } = require('../utils/passwordHash');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -12,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       username: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: true,
         validate: {
           notEmpty: {
             args: true,
@@ -19,8 +22,30 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notEmpty: true,
+        },
+      },
     },
-    {},
+    {
+      hooks: {
+        beforeCreate: user => {
+          user.password = hashPassword(user.password);
+        },
+      },
+    },
   );
   User.associate = ({ Message }) => {
     // associations can be defined here
@@ -44,6 +69,10 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
     return user;
+  };
+
+  User.prototype.validatePassword = function(password) {
+    return compareHashPassword(password, this.password);
   };
 
   return User;
