@@ -6,6 +6,12 @@ module.exports = (sequelize, DataTypes) => {
       text: {
         type: DataTypes.STRING,
         allowNull: false,
+        validate: {
+          notEmpty: {
+            args: true,
+            msg: 'A message has to have a text.',
+          },
+        },
       },
       userId: {
         type: DataTypes.UUID,
