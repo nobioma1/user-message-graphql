@@ -17,6 +17,18 @@ const server = new ApolloServer({
     models,
     authUser: await models.User.findByCred('johnFardom'),
   }),
+  formatError: error => {
+    // remove sequelize error message
+    // leave only the important validation error
+    const message = error.message
+      .replace('SequelizeValidationError: ', '')
+      .replace('Validation error: ', '');
+
+    return {
+      ...error,
+      message,
+    };
+  },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
