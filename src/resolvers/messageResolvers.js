@@ -18,8 +18,6 @@ module.exports = {
   User: {
     messages: async (parent, args, { models }) => {
       const { Message } = models;
-      console.log(parent.id);
-
       return await Message.findAll({
         where: {
           userId: parent.id,
@@ -39,7 +37,11 @@ module.exports = {
     updateMessage: async (parent, args, { models }) => {
       const { Message } = models;
       const { id, text } = args;
-      return await Message.update({ text }, { where: { id } });
+      const [, [message]] = await Message.update(
+        { text },
+        { where: { id }, returning: true },
+      );
+      return message;
     },
     deleteMessage: async (parent, args, { models }) => {
       const { Message } = models;
