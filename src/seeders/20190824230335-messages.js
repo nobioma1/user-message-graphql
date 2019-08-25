@@ -3,7 +3,7 @@
 module.exports = {
   up: queryInterface =>
     queryInterface.bulkInsert(
-      'messages',
+      'Messages',
       [
         {
           id: 1,
@@ -30,5 +30,5 @@ module.exports = {
       {},
     ),
 
-  down: queryInterface => queryInterface.bulkDelete('users', null, {}),
+  down: queryInterface => queryInterface.bulkDelete('Messages', null, {}),
 };

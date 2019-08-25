@@ -3,7 +3,7 @@
 module.exports = {
   up: queryInterface =>
     queryInterface.bulkInsert(
-      'users',
+      'Users',
       [
         {
           id: '78d9446b-e132-4dc0-b7f7-abb420fd6ddf',
@@ -14,7 +14,6 @@ module.exports = {
         {
           id: '407feede-3315-423f-9735-af880bdb3a9c',
           username: 'janeThriller',
-
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -28,5 +27,5 @@ module.exports = {
       {},
     ),
 
-  down: queryInterface => queryInterface.bulkDelete('users', null, {}),
+  down: queryInterface => queryInterface.bulkDelete('Users', null, {}),
 };

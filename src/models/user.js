@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    'user',
+    'User',
     {
       id: {
         type: DataTypes.UUID,
@@ -16,9 +16,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  User.associate = ({ message }) => {
+  User.associate = ({ Message }) => {
     // associations can be defined here
-    User.hasMany(message, { onDelete: 'CASCADE' });
+    User.hasMany(Message, {
+      foreignKey: 'userId',
+      as: 'message',
+      onDelete: 'CASCADE',
+    });
   };
   return User;
 };
