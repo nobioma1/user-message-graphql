@@ -24,5 +24,21 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: 'CASCADE',
     });
   };
+
+  // Custom model
+  User.findByCred = async cred => {
+    // This model retrieves a user by email or username
+
+    let user = await User.findOne({
+      where: { username: cred },
+    });
+    if (!user) {
+      user = await User.findOne({
+        where: { email: cred },
+      });
+    }
+    return user;
+  };
+
   return User;
 };
