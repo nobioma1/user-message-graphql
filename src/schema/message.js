@@ -26,6 +26,6 @@ module.exports = gql`
 
   type PageInfo {
     hasNextPage: Boolean!
-    endCursor: Date!
+    endCursor: String!
   }
 `;

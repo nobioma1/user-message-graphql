@@ -3,6 +3,10 @@ const { combineResolvers } = require('graphql-resolvers');
 
 const { isAuthenticated, isAuthor } = require('../resolvers/authorization');
 
+const toCursorHash = string => Buffer.from(string).toString('base64');
+const fromCursorHash = string =>
+  Buffer.from(string, 'base64').toString('ascii');
+
 module.exports = {
   Query: {
     messages: async (parent, args, { models }) => {
@@ -12,7 +16,7 @@ module.exports = {
         ? {
             where: {
               createdAt: {
-                [Sequelize.Op.lt]: cursor,
+                [Sequelize.Op.lt]: fromCursorHash(cursor),
               },
             },
           }
@@ -28,7 +32,7 @@ module.exports = {
         edges,
         pageInfo: {
           hasNextPage,
-          endCursor: messages[messages.length - 1].createdAt,
+          endCursor: toCursorHash(edges[edges.length - 1].createdAt.toString()),
         },
       };
     },
