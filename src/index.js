@@ -21,7 +21,6 @@ const getAuthUser = async req => {
       throw new AuthenticationError('Your Session expired. Sign in Again');
     }
   }
-  throw new AuthenticationError('You are not authenticated for this operation');
 };
 
 const server = new ApolloServer({
