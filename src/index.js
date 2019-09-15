@@ -1,21 +1,35 @@
 const express = require('express');
 const cors = require('cors');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, AuthenticationError } = require('apollo-server-express');
 
 const models = require('./models');
 const schema = require('./schema');
 const resolvers = require('./resolvers');
+const { verifyToken } = require('./utils/authToken');
 
 const app = express();
 
 app.use(cors());
 
+const getAuthUser = async req => {
+  const token = req.headers['x-token'];
+
+  if (token) {
+    try {
+      return await verifyToken(token);
+    } catch (error) {
+      throw new AuthenticationError('Your Session expired. Sign in Again');
+    }
+  }
+  throw new AuthenticationError('You are not authenticated for this operation');
+};
+
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: async () => ({
+  context: async ({ req }) => ({
     models,
-    authUser: await models.User.findByCred('johnFardom'),
+    authUser: await getAuthUser(req),
   }),
   formatError: error => {
     // remove sequelize error message
