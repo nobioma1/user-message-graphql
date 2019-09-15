@@ -38,6 +38,12 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      role: {
+        type: DataTypes.STRING,
+        validate: {
+          isIn: [['admin']],
+        },
+      },
     },
     {
       hooks: {
@@ -45,7 +51,7 @@ module.exports = (sequelize, DataTypes) => {
           user.password = hashPassword(user.password);
         },
       },
-    },
+    }
   );
   User.associate = ({ Message }) => {
     // associations can be defined here

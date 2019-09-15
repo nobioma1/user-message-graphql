@@ -30,8 +30,16 @@ module.exports = {
           createdAt: new Date(),
           updatedAt: new Date(),
         },
+        {
+          id: '8843a0e6-9451-441e-abab-30631ee9d036',
+          username: 'noble',
+          email: 'noble@email.com',
+          password: hashPassword('demo'),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       ],
-      {},
+      {}
     ),
 
   down: queryInterface => queryInterface.bulkDelete('Users', null, {}),
