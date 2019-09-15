@@ -6,6 +6,8 @@ const messageSchema = require('./message');
 // schema stitching
 
 const linkSchema = gql`
+  scalar Date
+
   type Query {
     info: String!
     _: Boolean
