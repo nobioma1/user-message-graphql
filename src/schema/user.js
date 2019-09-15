@@ -5,6 +5,7 @@ module.exports = gql`
     id: ID!
     username: String!
     email: String!
+    role: String
     messages: [Message!]
   }
 
@@ -18,7 +19,13 @@ module.exports = gql`
   }
 
   extend type Mutation {
-    signup(username: String!, email: String!, password: String!): Token!
+    signup(
+      username: String!
+      email: String!
+      password: String!
+      role: String
+    ): Token!
     login(cred: String!, password: String!): Token!
+    deleteUser(id: ID!): Boolean!
   }
 `;
