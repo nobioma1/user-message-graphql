@@ -17,11 +17,20 @@ module.exports = {
             },
           }
         : {};
-      return await Message.findAll({
+      const messages = await Message.findAll({
         order: [['createdAt', 'DESC']],
-        limit,
+        limit: limit + 1,
         ...cursorOptions,
       });
+      const hasNextPage = messages.length > limit;
+      const edges = hasNextPage ? messages.slice(0, -1) : messages;
+      return {
+        edges,
+        pageInfo: {
+          hasNextPage,
+          endCursor: messages[messages.length - 1].createdAt,
+        },
+      };
     },
     message: async (parent, args, { models }) => {
       const { Message } = models;
