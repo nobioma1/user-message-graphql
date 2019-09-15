@@ -5,8 +5,9 @@ const { isAuthenticated, isAuthor } = require('../resolvers/authorization');
 module.exports = {
   Query: {
     messages: async (parent, args, { models }) => {
+      const { offset = 0, limit = 100 } = args;
       const { Message } = models;
-      return await Message.findAll();
+      return await Message.findAll({ offset, limit });
     },
     message: async (parent, args, { models }) => {
       const { Message } = models;
