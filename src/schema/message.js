@@ -9,7 +9,7 @@ module.exports = gql`
   }
 
   extend type Query {
-    messages(offset: Int, limit: Int): [Message!]!
+    messages(cursor: String, limit: Int): [Message!]!
     message(id: ID!): Message
   }
 

@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const { combineResolvers } = require('graphql-resolvers');
 
 const { isAuthenticated, isAuthor } = require('../resolvers/authorization');
@@ -5,9 +6,22 @@ const { isAuthenticated, isAuthor } = require('../resolvers/authorization');
 module.exports = {
   Query: {
     messages: async (parent, args, { models }) => {
-      const { offset = 0, limit = 100 } = args;
+      const { cursor, limit = 100 } = args;
       const { Message } = models;
-      return await Message.findAll({ offset, limit });
+      const cursorOptions = cursor
+        ? {
+            where: {
+              createdAt: {
+                [Sequelize.Op.lt]: cursor,
+              },
+            },
+          }
+        : {};
+      return await Message.findAll({
+        order: [['createdAt', 'DESC']],
+        limit,
+        ...cursorOptions,
+      });
     },
     message: async (parent, args, { models }) => {
       const { Message } = models;
