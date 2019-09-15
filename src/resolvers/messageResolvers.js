@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const { combineResolvers } = require('graphql-resolvers');
 
 const { isAuthenticated, isAuthor } = require('../resolvers/authorization');
+const { pubsub, EVENTS } = require('../subscription');
 
 const toCursorHash = string => Buffer.from(string).toString('base64');
 const fromCursorHash = string =>
@@ -62,11 +63,15 @@ module.exports = {
       isAuthenticated,
       async (parent, args, { models, authUser }) => {
         const { Message } = models;
-        const message = {
+        const messageBody = {
           text: args.text,
           userId: authUser.id,
         };
-        return await Message.create(message);
+        const message = await Message.create(messageBody);
+        pubsub.publish(EVENTS.MESSAGE.CREATED, {
+          messageCreated: { message },
+        });
+        return message;
       }
     ),
     updateMessage: combineResolvers(
@@ -91,5 +96,10 @@ module.exports = {
         return await Message.destroy({ where: { id }, returning: true });
       }
     ),
+  },
+  Subscription: {
+    messageCreated: {
+      subscribe: () => pubsub.asyncIterator(EVENTS.MESSAGE.CREATED),
+    },
   },
 };

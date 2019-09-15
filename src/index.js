@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { ApolloServer, AuthenticationError } = require('apollo-server-express');
+const http = require('http');
 
 const models = require('./models');
 const schema = require('./schema');
@@ -26,10 +27,25 @@ const getAuthUser = async req => {
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: async ({ req }) => ({
-    models,
-    authUser: await getAuthUser(req),
-  }),
+  context: async ({ req, connection }) => {
+    /*
+      http request come with req and res, while
+      subscription sends a connection object
+    */
+    if (connection) {
+      return {
+        models,
+      };
+    }
+
+    if (req) {
+      const authUser = await getAuthUser(req);
+      return {
+        models,
+        authUser,
+      };
+    }
+  },
   formatError: error => {
     // remove sequelize error message
     // leave only the important validation error
@@ -45,7 +61,9 @@ const server = new ApolloServer({
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
-app.listen({ port: 5000 }, () => {
+httpServer.listen({ port: 5000 }, () => {
   console.log('Server Live... 🚀');
 });
