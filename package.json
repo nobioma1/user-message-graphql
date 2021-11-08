@@ -12,7 +12,7 @@
     "db:reset": "yarn db:undo && yarn db:migrate && yarn db:seed"
   },
   "dependencies": {
-    "apollo-server": "^2.9.0",
+    "apollo-server": "^2.25.3",
     "apollo-server-express": "^2.9.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
